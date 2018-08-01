@@ -1,12 +1,13 @@
-package http_mgo_service
+package mgosrv
 
 import (
+	"log"
+	"testing"
+
+	"github.com/jamillosantos/http"
+	"github.com/jamillosantos/macchiato"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/jamillosantos/macchiato"
-	"testing"
-	"log"
-	"github.com/jamillosantos/http"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/yaml.v2"
 )
@@ -41,12 +42,12 @@ var _ = Describe("MgoService", func() {
 	It("should apply the configuration using a pointer", func() {
 		var service MgoService
 		err := service.ApplyConfiguration(&MgoServiceConfiguration{
-			Addresses:    []string{"addresses"},
-			Username: "username",
-			Password: "password",
-			Database: "database",
-			PoolSize: 1,
-			Timeout: 60,
+			Addresses: []string{"addresses"},
+			Username:  "username",
+			Password:  "password",
+			Database:  "database",
+			PoolSize:  1,
+			Timeout:   60,
 		})
 		Expect(err).To(BeNil())
 		Expect(service.Configuration.Addresses).To(Equal([]string{"addresses"}))
@@ -60,12 +61,12 @@ var _ = Describe("MgoService", func() {
 	It("should apply the configuration using a copy", func() {
 		var service MgoService
 		err := service.ApplyConfiguration(MgoServiceConfiguration{
-			Addresses:    []string{"addresses"},
-			Username: "username",
-			Password: "password",
-			Database: "database",
-			PoolSize: 1,
-			Timeout: 60,
+			Addresses: []string{"addresses"},
+			Username:  "username",
+			Password:  "password",
+			Database:  "database",
+			PoolSize:  1,
+			Timeout:   60,
 		})
 		Expect(err).To(BeNil())
 		Expect(service.Configuration.Addresses).To(Equal([]string{"addresses"}))
@@ -79,12 +80,12 @@ var _ = Describe("MgoService", func() {
 	It("should start the service", func() {
 		var service MgoService
 		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
-			Addresses:   []string{"localhost"},
-			Username: "",
-			Password: "",
-			Database: "test-service-database",
-			PoolSize: 1,
-			Timeout: 60,
+			Addresses: []string{"localhost"},
+			Username:  "",
+			Password:  "",
+			Database:  "test-service-database",
+			PoolSize:  1,
+			Timeout:   60,
 		})).To(BeNil())
 		Expect(service.Start()).To(BeNil())
 		defer service.Stop()
@@ -94,12 +95,12 @@ var _ = Describe("MgoService", func() {
 	It("should stop the service", func() {
 		var service MgoService
 		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
-			Addresses:   []string{"localhost"},
-			Username: "",
-			Password: "",
-			Database: "test-service-database",
-			PoolSize: 1,
-			Timeout: 60,
+			Addresses: []string{"localhost"},
+			Username:  "",
+			Password:  "",
+			Database:  "test-service-database",
+			PoolSize:  1,
+			Timeout:   60,
 		})).To(BeNil())
 		Expect(service.Start()).To(BeNil())
 		Expect(service.Stop()).To(BeNil())
@@ -111,12 +112,12 @@ var _ = Describe("MgoService", func() {
 	It("should restart the service", func() {
 		var service MgoService
 		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
-			Addresses:   []string{"localhost"},
-			Username: "",
-			Password: "",
-			Database: "test-service-database",
-			PoolSize: 1,
-			Timeout: 60,
+			Addresses: []string{"localhost"},
+			Username:  "",
+			Password:  "",
+			Database:  "test-service-database",
+			PoolSize:  1,
+			Timeout:   60,
 		})).To(BeNil())
 		Expect(service.Start()).To(BeNil())
 		Expect(service.Restart()).To(BeNil())

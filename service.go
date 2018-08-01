@@ -1,25 +1,30 @@
-package http_mgo_service
+package mgosrv
 
 import (
 	"errors"
-	"time"
-	"gopkg.in/mgo.v2"
-	"github.com/jamillosantos/http"
 	"fmt"
+	"time"
+
+	"github.com/jamillosantos/http"
+	"gopkg.in/mgo.v2"
 )
 
+// MgoServiceConfiguration describes the `MgoService` configuration.
 type MgoServiceConfiguration struct {
-	Addresses []string       `yaml:"addresses"`
-	Database  string         `yaml:"database"`
-	Username  string         `yaml:"username"`
-	Password  string         `yaml:"password"`
-	PoolSize  int            `yaml:"pool_size"`
-	Timeout   int            `yaml:"timeout"`
+	Addresses []string        `yaml:"addresses"`
+	Database  string          `yaml:"database"`
+	Username  string          `yaml:"username"`
+	Password  string          `yaml:"password"`
+	PoolSize  int             `yaml:"pool_size"`
+	Timeout   int             `yaml:"timeout"`
 	Mode      *MgoServiceMode `yaml:"mode"`
 }
 
+// MgoServiceMode is an alias for the `mgo.Mode` that implements
+// Unmarshaling from the YAML.
 type MgoServiceMode mgo.Mode
 
+// UnmarshalYAML implements the marshaling a `mgo.Mode` to string.
 func (mode *MgoServiceMode) UnmarshalYAML(unmarshal func(interface{}) error) error {
 	var modeStr string
 
@@ -50,17 +55,25 @@ func (mode *MgoServiceMode) UnmarshalYAML(unmarshal func(interface{}) error) err
 	return nil
 }
 
+// MgoService implements the mgo service itself.
 type MgoService struct {
 	running       bool
 	session       *mgo.Session
 	Configuration MgoServiceConfiguration
 }
+
+// MgoServiceSessionHandler is the handler description for being used on
+// `MgoService.RunWithSession` method.
 type MgoServiceSessionHandler func(session *mgo.Session) error
 
+// LoadConfiguration is an abstract method that should be overwritten on the
+// actual usage of this service.
 func (service *MgoService) LoadConfiguration() (interface{}, error) {
 	return nil, errors.New("not implemented")
 }
 
+// ApplyConfiguration implements the type verification of the given
+// `configuration` and applies it to the service.
 func (service *MgoService) ApplyConfiguration(configuration interface{}) error {
 	switch c := configuration.(type) {
 	case MgoServiceConfiguration:
@@ -71,6 +84,8 @@ func (service *MgoService) ApplyConfiguration(configuration interface{}) error {
 		return http.ErrWrongConfigurationInformed
 	}
 
+	// If the configuration mode is not defined, get the default behavior.
+	// From the MongoDB documentation.
 	if service.Configuration.Mode == nil {
 		defaultMode := MgoServiceMode(mgo.Primary)
 		service.Configuration.Mode = &defaultMode
@@ -79,6 +94,7 @@ func (service *MgoService) ApplyConfiguration(configuration interface{}) error {
 	return nil
 }
 
+// Restart restarts the service.
 func (service *MgoService) Restart() error {
 	if service.running {
 		err := service.Stop()
@@ -89,10 +105,12 @@ func (service *MgoService) Restart() error {
 	return service.Start()
 }
 
+// Start initialize the mongo connection and saves the session.
 func (service *MgoService) Start() error {
 	if !service.running {
 		var err error
 
+		// If there is not username and password defined connect with no authentication info
 		if service.Configuration.Username == "" && service.Configuration.Password == "" {
 			service.session, err = mgo.Dial(fmt.Sprintf("%s/%s", service.Configuration.Addresses[0], service.Configuration.Database))
 		} else {
@@ -110,12 +128,16 @@ func (service *MgoService) Start() error {
 			return err
 		}
 
+		// Applies the mode
 		service.session.SetMode(mgo.Mode(*service.Configuration.Mode), true)
+
+		// Sets the pool size
 		if service.Configuration.PoolSize > 0 {
 			service.session.SetPoolLimit(service.Configuration.PoolSize)
 		}
 
-		_, err = service.session.DB("").CollectionNames()
+		// Pings the session to ensure it is working
+		err = service.session.Ping()
 		if err != nil {
 			return err
 		}
@@ -125,10 +147,12 @@ func (service *MgoService) Start() error {
 	return nil
 }
 
+// newSession suppose to pull a new session instance from the pool.
 func (service *MgoService) newSession() *mgo.Session {
 	return service.session.Clone()
 }
 
+// Stop stops the service.
 func (service *MgoService) Stop() error {
 	if service.running {
 		service.session.Close()
@@ -137,6 +161,7 @@ func (service *MgoService) Stop() error {
 	return nil
 }
 
+// RunWithSession runs a handler passing a new instance of the a session.
 func (service *MgoService) RunWithSession(handler MgoServiceSessionHandler) error {
 	if !service.running {
 		return http.ErrServiceNotRunning

@@ -12,5 +12,7 @@
 *.out
 
 .idea/
+.vscode/
 .gopath/
 .cover/
+*.coverprofile
