@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jamillosantos/http"
+	"github.com/lab259/http"
 	"gopkg.in/mgo.v2"
 )
 
