@@ -1,13 +1,13 @@
-[![CircleCI](https://circleci.com/gh/jamillosantos/http-mgo-service.svg?style=svg)](https://circleci.com/gh/jamillosantos/http-mgo-service) [![codecov](https://codecov.io/gh/jamillosantos/http-mgo-service/branch/master/graph/badge.svg)](https://codecov.io/gh/jamillosantos/http-mgo-service)
+[![CircleCI](https://circleci.com/gh/lab259/http-redigo-service.svg?style=svg)](https://circleci.com/gh/lab259/http-redigo-service) [![codecov](https://codecov.io/gh/lab259/http-mgo-service/branch/master/graph/badge.svg)](https://codecov.io/gh/lab259/http-mgo-service)
 
 # http-mgo-service
 
-The http-mgo-service is the [jamillosantos/http](//github.com/jamillosantos/http) service
+The http-mgo-service is the [lab259/http](//github.com/lab259/http) service
 implementation for the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 
 ## Dependencies
 
-It depends on the [jamillosantos/http](//github.com/jamillosantos/http) (and its dependencies,
+It depends on the [lab259/http](//github.com/lab259/http) (and its dependencies,
 of course) itself and the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 
 ## Installation
@@ -15,7 +15,7 @@ of course) itself and the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 First, fetch the library to the repository.
 
 ```bash
-go get github.com/jamillosantos/http-mgo-service
+go get github.com/lab259/http-mgo-service
 ```
 
 ## Usage
