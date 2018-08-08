@@ -62,10 +62,6 @@ type MgoService struct {
 	Configuration MgoServiceConfiguration
 }
 
-// MgoServiceSessionHandler is the handler description for being used on
-// `MgoService.RunWithSession` method.
-type MgoServiceSessionHandler func(session *mgo.Session) error
-
 // LoadConfiguration is an abstract method that should be overwritten on the
 // actual usage of this service.
 func (service *MgoService) LoadConfiguration() (interface{}, error) {
@@ -162,7 +158,7 @@ func (service *MgoService) Stop() error {
 }
 
 // RunWithSession runs a handler passing a new instance of the a session.
-func (service *MgoService) RunWithSession(handler MgoServiceSessionHandler) error {
+func (service *MgoService) RunWithSession(handler func(session *mgo.Session) error) error {
 	if !service.running {
 		return http.ErrServiceNotRunning
 	}
