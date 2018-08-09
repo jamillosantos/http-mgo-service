@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/globalsign/mgo"
 	"github.com/lab259/http"
-	"gopkg.in/mgo.v2"
 )
 
 // MgoServiceConfiguration describes the `MgoService` configuration.

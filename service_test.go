@@ -4,11 +4,11 @@ import (
 	"log"
 	"testing"
 
+	"github.com/globalsign/mgo"
 	"github.com/jamillosantos/macchiato"
 	"github.com/lab259/http"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gopkg.in/mgo.v2"
 	"gopkg.in/yaml.v2"
 )
 
