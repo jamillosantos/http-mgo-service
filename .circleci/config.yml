@@ -23,9 +23,9 @@ jobs:
           command: dockerize -wait tcp://localhost:27017 -timeout 10s
 
       - run:
-        name: Setup database
-        command: |
-          mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
+          name: Setup database
+          command: |
+            mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
 
       - run: go get -u github.com/onsi/ginkgo/ginkgo
       - run: make deps-ci
