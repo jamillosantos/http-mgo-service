@@ -77,6 +77,37 @@ var _ = Describe("MgoService", func() {
 		Expect(service.Configuration.Timeout).To(Equal(60))
 	})
 
+	It("should start the service with auth", func() {
+		var service MgoService
+		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
+			Addresses: []string{"localhost"},
+			Username:  "snake.eyes",
+			Password:  "123456",
+			Database:  "test-service-database",
+			PoolSize:  1,
+			Timeout:   60,
+		})).To(BeNil())
+		Expect(service.Start()).To(BeNil())
+		defer service.Stop()
+		Expect(service.RunWithSession(pingSession)).To(BeNil())
+	})
+
+	It("should fail starting the service with tls when server does not support", func() {
+		var service MgoService
+		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
+			Addresses: []string{"localhost"},
+			Username:  "snake.eyes",
+			Password:  "123456",
+			Database:  "test-service-database",
+			PoolSize:  1,
+			Timeout:   5,
+			UseTLS:    true,
+		})).To(BeNil())
+		Expect(service.Start()).ToNot(BeNil())
+		defer service.Stop()
+		Expect(service.RunWithSession(pingSession)).ToNot(BeNil())
+	})
+
 	It("should start the service", func() {
 		var service MgoService
 		Expect(service.ApplyConfiguration(MgoServiceConfiguration{

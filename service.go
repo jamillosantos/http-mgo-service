@@ -1,8 +1,10 @@
 package mgosrv
 
 import (
+	"crypto/tls"
 	"errors"
 	"fmt"
+	"net"
 	"time"
 
 	"github.com/globalsign/mgo"
@@ -18,6 +20,7 @@ type MgoServiceConfiguration struct {
 	PoolSize  int             `yaml:"pool_size"`
 	Timeout   int             `yaml:"timeout"`
 	Mode      *MgoServiceMode `yaml:"mode"`
+	UseTLS    bool            `yaml:"use_tls"`
 }
 
 // MgoServiceMode is an alias for the `mgo.Mode` that implements
@@ -117,6 +120,14 @@ func (service *MgoService) Start() error {
 				Username: service.Configuration.Username,
 				Password: service.Configuration.Password,
 			}
+
+			if service.Configuration.UseTLS {
+				dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+					tlsConfig := &tls.Config{}
+					return tls.Dial("tcp", addr.String(), tlsConfig)
+				}
+			}
+
 			service.session, err = mgo.DialWithInfo(dialInfo)
 		}
 
