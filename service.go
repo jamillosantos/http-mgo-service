@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo"
-	"github.com/lab259/http"
+	"github.com/lab259/go-rscsrv"
 )
 
 // MgoServiceConfiguration describes the `MgoService` configuration.
@@ -80,7 +80,7 @@ func (service *MgoService) ApplyConfiguration(configuration interface{}) error {
 	case *MgoServiceConfiguration:
 		service.Configuration = *c
 	default:
-		return http.ErrWrongConfigurationInformed
+		return rscsrv.ErrWrongConfigurationInformed
 	}
 
 	// If the configuration mode is not defined, get the default behavior.
@@ -171,7 +171,7 @@ func (service *MgoService) Stop() error {
 // RunWithSession runs a handler passing a new instance of the a session.
 func (service *MgoService) RunWithSession(handler func(session *mgo.Session) error) error {
 	if !service.running {
-		return http.ErrServiceNotRunning
+		return rscsrv.ErrServiceNotRunning
 	}
 	newSession := service.newSession()
 	defer newSession.Close()

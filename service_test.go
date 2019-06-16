@@ -8,8 +8,7 @@ import (
 
 	"github.com/globalsign/mgo"
 	"github.com/jamillosantos/macchiato"
-	"github.com/lab259/http"
-	"github.com/onsi/ginkgo"
+	"github.com/lab259/go-rscsrv"
 	. "github.com/onsi/ginkgo"
 	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
@@ -17,8 +16,8 @@ import (
 )
 
 func TestService(t *testing.T) {
-	log.SetOutput(ginkgo.GinkgoWriter)
-	RegisterFailHandler(ginkgo.Fail)
+	log.SetOutput(GinkgoWriter)
+	RegisterFailHandler(Fail)
 
 	description := "go-rscsrv-mgo Test Suite"
 	if os.Getenv("CI") == "" {
@@ -28,7 +27,7 @@ func TestService(t *testing.T) {
 		os.MkdirAll(reporterOutputDir, os.ModePerm)
 		junitReporter := reporters.NewJUnitReporter(path.Join(reporterOutputDir, "results.xml"))
 		macchiatoReporter := macchiato.NewReporter()
-		RunSpecsWithCustomReporters(t, description, []ginkgo.Reporter{macchiatoReporter, junitReporter})
+		RunSpecsWithCustomReporters(t, description, []Reporter{macchiatoReporter, junitReporter})
 	}
 }
 
@@ -50,7 +49,7 @@ var _ = Describe("MgoService", func() {
 		err := service.ApplyConfiguration(map[string]interface{}{
 			"address": "localhost",
 		})
-		Expect(err).To(Equal(http.ErrWrongConfigurationInformed))
+		Expect(err).To(Equal(rscsrv.ErrWrongConfigurationInformed))
 	})
 
 	It("should apply the configuration using a pointer", func() {
@@ -151,7 +150,7 @@ var _ = Describe("MgoService", func() {
 		Expect(service.Stop()).To(BeNil())
 		Expect(service.RunWithSession(func(session *mgo.Session) error {
 			return nil
-		})).To(Equal(http.ErrServiceNotRunning))
+		})).To(Equal(rscsrv.ErrServiceNotRunning))
 	})
 
 	It("should restart the service", func() {
