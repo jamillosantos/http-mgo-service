@@ -1,0 +1,27 @@
+[[constraint]]
+  branch = "master"
+  name = "github.com/globalsign/mgo"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/jamillosantos/macchiato"
+
+[[constraint]]
+  name = "github.com/lab259/http"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/onsi/ginkgo"
+  version = "1.8.0"
+
+[[constraint]]
+  name = "github.com/onsi/gomega"
+  version = "1.5.0"
+
+[[constraint]]
+  name = "gopkg.in/yaml.v2"
+  version = "2.2.2"
+
+[prune]
+  go-tests = true
+  unused-packages = true
