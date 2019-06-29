@@ -1,21 +1,16 @@
-
-GOPATH=$(CURDIR)/.gopath
-GOPATHCMD=GOPATH=$(GOPATH)
-
 COVERDIR=$(CURDIR)/.cover
 COVERAGEFILE=$(COVERDIR)/cover.out
-
-.PHONY: deps deps-ci coverage coverage-ci test test-watch coverage coverage-html
+COVERAGEREPORT=$(COVERDIR)/report.html
 
 test:
-	@${GOPATHCMD} ginkgo --failFast ./...
+	@ginkgo --failFast ./...
 
 test-watch:
-	@${GOPATHCMD} ginkgo watch --debug -cover -r ./...
+	@ginkgo watch --debug -cover -r ./...
 
 coverage-ci:
 	@mkdir -p $(COVERDIR)
-	@${GOPATHCMD} ginkgo -r -covermode=count --cover --trace ./
+	@ginkgo -r -covermode=count --cover --trace ./
 	@echo "mode: count" > "${COVERAGEFILE}"
 	@find . -type f -name *.coverprofile -exec grep -h -v "^mode:" {} >> "${COVERAGEFILE}" \; -exec rm -f {} \;
 
@@ -23,11 +18,7 @@ coverage: coverage-ci
 	@sed -i -e "s|_$(CURDIR)/|./|g" "${COVERAGEFILE}"
 
 coverage-html: coverage
-	@$(GOPATHCMD) go tool cover -html="${COVERAGEFILE}" -o .cover/report.html
+	@go tool cover -html="${COVERAGEFILE}" -o $(COVERAGEREPORT)
+	@xdg-open $(COVERAGEREPORT) 2> /dev/null > /dev/null
 
-deps:
-	@mkdir -p ${GOPATH}
-	@$(GOPATHCMD) go get -v -t ./...
-
-deps-ci:
-	-go get -v -t ./...
+.PHONY: test test-watch coverage coverage-ci coverage-html

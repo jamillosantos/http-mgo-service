@@ -1,13 +1,13 @@
-[![CircleCI](https://circleci.com/gh/lab259/http-mgo-service.svg?style=shield)](https://circleci.com/gh/lab259/http-mgo-service) [![codecov](https://codecov.io/gh/lab259/http-mgo-service/branch/master/graph/badge.svg)](https://codecov.io/gh/lab259/http-mgo-service)
+[![CircleCI](https://circleci.com/gh/lab259/go-rscsrv-mgo.svg?style=shield)](https://circleci.com/gh/lab259/go-rscsrv-mgo) [![codecov](https://codecov.io/gh/lab259/go-rscsrv-mgo/branch/master/graph/badge.svg)](https://codecov.io/gh/lab259/go-rscsrv-mgo)
 
-# http-mgo-service
+# go-rscsrv-mgo
 
-The http-mgo-service is the [lab259/http](//github.com/lab259/http) service
+The go-rscsrv-mgo is the [lab259/go-rscsrv](//github.com/lab259/go-rscsrv) service
 implementation for the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 
 ## Dependencies
 
-It depends on the [lab259/http](//github.com/lab259/http) (and its dependencies,
+It depends on the [lab259/go-rscsrv](//github.com/lab259/go-rscsrv) (and its dependencies,
 of course) itself and the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 
 ## Installation
@@ -15,7 +15,7 @@ of course) itself and the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
 First, fetch the library to the repository.
 
 ```bash
-go get github.com/lab259/http-mgo-service
+go get github.com/lab259/go-rscsrv-mgo
 ```
 
 ## Usage
@@ -39,7 +39,7 @@ err := mgoService.ApplyConfiguration(MgoServiceConfiguration{
 if err != nil {
     panic(err)
 }
-        
+
 // Starting service
 err := mgoService.Start()
 
@@ -62,4 +62,3 @@ if err != nil {
 
 id := object.Id // "my-object-id"
 ```
-
