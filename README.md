@@ -11,9 +11,7 @@ of course) itself and the [globalsign/mgo](//github.com/globalsign/mgo) library.
 
 ## Installation
 
-We recommend you to use `dep`.
-
-Or, you may fetch the library directly using `go get`.
+You may fetch the library directly using `go get`.
 
 ```bash
 go get github.com/lab259/go-rscsrv-mgo
