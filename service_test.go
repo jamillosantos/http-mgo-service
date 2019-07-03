@@ -2,20 +2,34 @@ package mgosrv
 
 import (
 	"log"
+	"os"
+	"path"
 	"testing"
 
 	"github.com/globalsign/mgo"
 	"github.com/jamillosantos/macchiato"
 	"github.com/lab259/http"
+	"github.com/onsi/ginkgo"
 	. "github.com/onsi/ginkgo"
+	"github.com/onsi/ginkgo/reporters"
 	. "github.com/onsi/gomega"
 	"gopkg.in/yaml.v2"
 )
 
 func TestService(t *testing.T) {
-	log.SetOutput(GinkgoWriter)
-	RegisterFailHandler(Fail)
-	macchiato.RunSpecs(t, "Mgo Test Suite")
+	log.SetOutput(ginkgo.GinkgoWriter)
+	RegisterFailHandler(ginkgo.Fail)
+
+	description := "go-rscsrv-mgo Test Suite"
+	if os.Getenv("CI") == "" {
+		macchiato.RunSpecs(t, description)
+	} else {
+		reporterOutputDir := "./test-results/go-rscsrv-mgo"
+		os.MkdirAll(reporterOutputDir, os.ModePerm)
+		junitReporter := reporters.NewJUnitReporter(path.Join(reporterOutputDir, "results.xml"))
+		macchiatoReporter := macchiato.NewReporter()
+		RunSpecsWithCustomReporters(t, description, []ginkgo.Reporter{macchiatoReporter, junitReporter})
+	}
 }
 
 func pingSession(session *mgo.Session) error {

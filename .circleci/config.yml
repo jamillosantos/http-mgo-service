@@ -2,33 +2,31 @@ version: 2
 jobs:
   build:
     docker:
-    - image: circleci/golang:1.9
-
-    - image: circleci/mongo:4.0.0
-
-    working_directory: /go/src/github.com/jamillosantos/http-mgo-service
+      - image: circleci/golang:1.12
+      - image: circleci/mongo:4.0.0
     steps:
       - checkout
-
       - run: sudo apt install mongodb-clients libssl-dev
-
-      - run:
-          name: Install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-
+      - restore_cache:
+          keys:
+            - deps-{{ .Branch }}-{{ checksum "go.sum" }}
+            - deps-{{ .Branch }}-
+            - deps-
       - run:
           name: Wait for MongoDB
           command: dockerize -wait tcp://localhost:27017 -timeout 10s
-
       - run:
           name: Setup database
           command: |
             mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
-
-      - run: go get -u github.com/onsi/ginkgo/ginkgo
-      - run: make deps-ci
+      - run: go get github.com/onsi/ginkgo/ginkgo
+      - run: go mod download
       - run: make test
       - run: make coverage-ci
       - run: bash <(curl -s https://codecov.io/bash)
+      - save_cache:
+          key: deps-{{ .Branch }}-{{ checksum "go.sum" }}
+          paths:
+            - /go/pkg/mod
+      - store_test_results:
+          path: test-results
