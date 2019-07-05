@@ -2,17 +2,16 @@
 
 # go-rscsrv-mgo
 
-The go-rscsrv-mgo is the [lab259/go-rscsrv](//github.com/lab259/go-rscsrv) service
-implementation for the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
+The go-rscsrv-mgo is the MongoDB resource service that wraps [globalsign/mgo](//github.com/globalsign/mgo) library.
 
 ## Dependencies
 
 It depends on the [lab259/go-rscsrv](//github.com/lab259/go-rscsrv) (and its dependencies,
-of course) itself and the [go-mgo/mgo](//github.com/go-mgo/mgo) library.
+of course) itself and the [globalsign/mgo](//github.com/globalsign/mgo) library.
 
 ## Installation
 
-First, fetch the library to the repository.
+You may fetch the library directly using `go get`.
 
 ```bash
 go get github.com/lab259/go-rscsrv-mgo
