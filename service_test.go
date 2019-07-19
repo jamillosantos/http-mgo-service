@@ -136,6 +136,22 @@ var _ = Describe("MgoService", func() {
 		Expect(service.RunWithSession(pingSession)).To(BeNil())
 	})
 
+	It("should fail starting the service with no address", func() {
+		var service MgoService
+		err := service.ApplyConfiguration(MgoServiceConfiguration{
+			Username: "",
+			Password: "",
+			Database: "test-service-database",
+			PoolSize: 1,
+			Timeout:  1,
+		})
+		Expect(err).To(BeNil())
+
+		err = service.Start()
+		Expect(err).To(HaveOccurred())
+		Expect(err.Error()).To(Equal("no reachable servers"))
+	})
+
 	It("should stop the service", func() {
 		var service MgoService
 		Expect(service.ApplyConfiguration(MgoServiceConfiguration{
