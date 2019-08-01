@@ -109,28 +109,22 @@ func (service *MgoService) Start() error {
 	if !service.running {
 		var err error
 
-		// If there is not username and password defined connect with no authentication info
-		if service.Configuration.Username == "" && service.Configuration.Password == "" {
-			service.session, err = mgo.Dial(fmt.Sprintf("%s/%s", service.Configuration.Addresses[0], service.Configuration.Database))
-		} else {
-			dialInfo := &mgo.DialInfo{
-				Addrs:    service.Configuration.Addresses,
-				Timeout:  time.Duration(service.Configuration.Timeout) * time.Second,
-				Database: service.Configuration.Database,
-				Username: service.Configuration.Username,
-				Password: service.Configuration.Password,
-			}
-
-			if service.Configuration.UseTLS {
-				dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
-					tlsConfig := &tls.Config{}
-					return tls.Dial("tcp", addr.String(), tlsConfig)
-				}
-			}
-
-			service.session, err = mgo.DialWithInfo(dialInfo)
+		dialInfo := &mgo.DialInfo{
+			Addrs:    service.Configuration.Addresses,
+			Timeout:  time.Duration(service.Configuration.Timeout) * time.Second,
+			Database: service.Configuration.Database,
+			Username: service.Configuration.Username,
+			Password: service.Configuration.Password,
 		}
 
+		if service.Configuration.UseTLS {
+			dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+				tlsConfig := &tls.Config{}
+				return tls.Dial("tcp", addr.String(), tlsConfig)
+			}
+		}
+
+		service.session, err = mgo.DialWithInfo(dialInfo)
 		if err != nil {
 			return err
 		}
