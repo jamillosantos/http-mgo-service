@@ -6,12 +6,18 @@ jobs:
       - image: circleci/mongo:4.0.0
     steps:
       - checkout
-      - run: sudo apt install mongodb-clients libssl-dev
       - restore_cache:
           keys:
             - deps-{{ .Branch }}-{{ checksum "go.sum" }}
             - deps-{{ .Branch }}-
             - deps-
+      - run:
+          name: Install Tools
+          command: |
+            wget -qO - https://www.mongodb.org/static/pgp/server-4.0.asc | sudo apt-key add -
+            echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu bionic/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+            sudo apt-get update
+            sudo apt-get install -y --force-yes mongodb-org-shell libssl-dev
       - run:
           name: Wait for MongoDB
           command: dockerize -wait tcp://localhost:27017 -timeout 10s
