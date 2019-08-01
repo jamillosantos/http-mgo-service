@@ -27,7 +27,6 @@ jobs:
             mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
       - run: go get github.com/onsi/ginkgo/ginkgo
       - run: go mod download
-      - run: make test
       - run: make coverage-ci
       - run: bash <(curl -s https://codecov.io/bash)
       - save_cache:
