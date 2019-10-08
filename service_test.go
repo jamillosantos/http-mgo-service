@@ -39,7 +39,7 @@ var _ = Describe("MgoService", func() {
 	It("should fail loading a configuration", func() {
 		var service MgoService
 		configuration, err := service.LoadConfiguration()
-		Expect(err).NotTo(BeNil())
+		Expect(err).To(HaveOccurred())
 		Expect(err.Error()).To(ContainSubstring("not implemented"))
 		Expect(configuration).To(BeNil())
 	})
@@ -62,7 +62,7 @@ var _ = Describe("MgoService", func() {
 			PoolSize:  1,
 			Timeout:   60,
 		})
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		Expect(service.Configuration.Addresses).To(Equal([]string{"addresses"}))
 		Expect(service.Configuration.Username).To(Equal("username"))
 		Expect(service.Configuration.Password).To(Equal("password"))
@@ -81,7 +81,7 @@ var _ = Describe("MgoService", func() {
 			PoolSize:  1,
 			Timeout:   60,
 		})
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 		Expect(service.Configuration.Addresses).To(Equal([]string{"addresses"}))
 		Expect(service.Configuration.Username).To(Equal("username"))
 		Expect(service.Configuration.Password).To(Equal("password"))
@@ -99,10 +99,10 @@ var _ = Describe("MgoService", func() {
 			Database:  "test-service-database",
 			PoolSize:  1,
 			Timeout:   60,
-		})).To(BeNil())
-		Expect(service.Start()).To(BeNil())
+		})).To(Succeed())
+		Expect(service.Start()).To(Succeed())
 		defer service.Stop()
-		Expect(service.RunWithSession(pingSession)).To(BeNil())
+		Expect(service.RunWithSession(pingSession)).To(Succeed())
 	})
 
 	It("should fail starting the service with tls when server does not support", func() {
@@ -115,10 +115,10 @@ var _ = Describe("MgoService", func() {
 			PoolSize:  1,
 			Timeout:   5,
 			UseTLS:    true,
-		})).To(BeNil())
-		Expect(service.Start()).ToNot(BeNil())
+		})).To(Succeed())
+		Expect(service.Start()).ToNot(Succeed())
 		defer service.Stop()
-		Expect(service.RunWithSession(pingSession)).ToNot(BeNil())
+		Expect(service.RunWithSession(pingSession)).ToNot(Succeed())
 	})
 
 	It("should start the service", func() {
@@ -130,10 +130,10 @@ var _ = Describe("MgoService", func() {
 			Database:  "test-service-database",
 			PoolSize:  1,
 			Timeout:   60,
-		})).To(BeNil())
-		Expect(service.Start()).To(BeNil())
+		})).To(Succeed())
+		Expect(service.Start()).To(Succeed())
 		defer service.Stop()
-		Expect(service.RunWithSession(pingSession)).To(BeNil())
+		Expect(service.RunWithSession(pingSession)).To(Succeed())
 	})
 
 	It("should fail starting the service with no address", func() {
@@ -145,7 +145,7 @@ var _ = Describe("MgoService", func() {
 			PoolSize: 1,
 			Timeout:  1,
 		})
-		Expect(err).To(BeNil())
+		Expect(err).ToNot(HaveOccurred())
 
 		err = service.Start()
 		Expect(err).To(HaveOccurred())
@@ -161,9 +161,9 @@ var _ = Describe("MgoService", func() {
 			Database:  "test-service-database",
 			PoolSize:  1,
 			Timeout:   60,
-		})).To(BeNil())
-		Expect(service.Start()).To(BeNil())
-		Expect(service.Stop()).To(BeNil())
+		})).To(Succeed())
+		Expect(service.Start()).To(Succeed())
+		Expect(service.Stop()).To(Succeed())
 		Expect(service.RunWithSession(func(session *mgo.Session) error {
 			return nil
 		})).To(Equal(rscsrv.ErrServiceNotRunning))
@@ -178,10 +178,10 @@ var _ = Describe("MgoService", func() {
 			Database:  "test-service-database",
 			PoolSize:  1,
 			Timeout:   60,
-		})).To(BeNil())
-		Expect(service.Start()).To(BeNil())
-		Expect(service.Restart()).To(BeNil())
-		Expect(service.RunWithSession(pingSession)).To(BeNil())
+		})).To(Succeed())
+		Expect(service.Start()).To(Succeed())
+		Expect(service.Restart()).To(Succeed())
+		Expect(service.RunWithSession(pingSession)).To(Succeed())
 	})
 
 	Describe("Mode YAML", func() {
@@ -200,10 +200,10 @@ timeout: 60
 
 			err := yaml.Unmarshal([]byte(yamlData), &configuration)
 
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			err = service.ApplyConfiguration(configuration)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(*service.Configuration.Mode).To(Equal(MgoServiceMode(mgo.Primary)))
 		})
 
@@ -241,10 +241,10 @@ mode: "nearest"
 
 			err := yaml.Unmarshal([]byte(yamlData), &configuration)
 
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 
 			err = service.ApplyConfiguration(configuration)
-			Expect(err).To(BeNil())
+			Expect(err).ToNot(HaveOccurred())
 			Expect(*service.Configuration.Mode).To(Equal(MgoServiceMode(mgo.Nearest)))
 		})
 	})

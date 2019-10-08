@@ -23,7 +23,7 @@ coverage-html: coverage
 
 dcup:
 	@docker-compose up -d
-	@docker-compose exec mongo mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
+	@docker-compose exec -T mongo mongo test-service-database --eval 'db.createUser({user:"snake.eyes",pwd:"123456",roles:["readWrite"], passwordDigestor: "server"});'
 
 dcdn:
 	@docker-compose down
