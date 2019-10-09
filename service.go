@@ -164,10 +164,11 @@ func (service *MgoService) Stop() error {
 
 // RunWithSession runs a handler passing a new instance of the a session.
 func (service *MgoService) RunWithSession(handler func(session *mgo.Session) error) error {
-	if service.isRunning() {
-		newSession := service.newSession()
-		defer newSession.Close()
-		return handler(newSession)
+	if !service.isRunning() {
+		return rscsrv.ErrServiceNotRunning
 	}
-	return rscsrv.ErrServiceNotRunning
+
+	newSession := service.newSession()
+	defer newSession.Close()
+	return handler(newSession)
 }
