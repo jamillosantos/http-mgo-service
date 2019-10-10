@@ -60,7 +60,7 @@ func (mode *MgoServiceMode) UnmarshalYAML(unmarshal func(interface{}) error) err
 
 // MgoService implements the mgo service itself.
 type MgoService struct {
-	running       bool
+	serviceState
 	session       *mgo.Session
 	Configuration MgoServiceConfiguration
 }
@@ -95,7 +95,7 @@ func (service *MgoService) ApplyConfiguration(configuration interface{}) error {
 
 // Restart restarts the service.
 func (service *MgoService) Restart() error {
-	if service.running {
+	if service.isRunning() {
 		err := service.Stop()
 		if err != nil {
 			return err
@@ -106,7 +106,7 @@ func (service *MgoService) Restart() error {
 
 // Start initialize the mongo connection and saves the session.
 func (service *MgoService) Start() error {
-	if !service.running {
+	if !service.isRunning() {
 		var err error
 
 		dialInfo := &mgo.DialInfo{
@@ -143,7 +143,7 @@ func (service *MgoService) Start() error {
 			return err
 		}
 
-		service.running = true
+		service.setRunning(true)
 	}
 	return nil
 }
@@ -155,18 +155,19 @@ func (service *MgoService) newSession() *mgo.Session {
 
 // Stop stops the service.
 func (service *MgoService) Stop() error {
-	if service.running {
+	if service.isRunning() {
 		service.session.Close()
-		service.running = false
+		service.setRunning(false)
 	}
 	return nil
 }
 
 // RunWithSession runs a handler passing a new instance of the a session.
 func (service *MgoService) RunWithSession(handler func(session *mgo.Session) error) error {
-	if !service.running {
+	if !service.isRunning() {
 		return rscsrv.ErrServiceNotRunning
 	}
+
 	newSession := service.newSession()
 	defer newSession.Close()
 	return handler(newSession)
